@@ -59,7 +59,7 @@ class PriorityQueue:
         self.queue_list.remove(smallest_item)
         return smallest_item
 
-    
+
 def calculate_g_value(current_node_coordinates, next_node_coordinates, current_node, next_node):
     #Euclidian Distance base algorithm credit to GeeksforGeeks
     x1, y1 = current_node_coordinates
@@ -71,7 +71,6 @@ def calculate_g_value(current_node_coordinates, next_node_coordinates, current_n
     distance_value = math.sqrt((subtract_the_x * subtract_the_x) + (subtract_the_y * subtract_the_y))
 
     g_value = distance_value + current_node.g_value
-    next_node.g_value = g_value
 
     return g_value
 
@@ -110,7 +109,7 @@ def shortest_path(input_map, start_intersection, end_intersection):
 
     #converting graph into data structure for analysis
     intersection_graph_nodes = []
-    
+
     #if start and end are the same
     if start_intersection == end_intersection:
         return [start_intersection]
@@ -121,7 +120,7 @@ def shortest_path(input_map, start_intersection, end_intersection):
         if start_intersection == intersection[0]:
             start_node = intersection_node
         elif end_intersection == intersection[0]:
-            stop_node = intersection_node       
+            stop_node = intersection_node
 
     map_graph = Graph(intersection_graph_nodes)
 
@@ -152,7 +151,7 @@ def shortest_path(input_map, start_intersection, end_intersection):
         current_location = open_list.pop() #removes smallest item from priority queue, assign to variable
         closed_list.append(current_location[0]) #puts smallest element in closed list - this prevents it from being checked again
 
-            
+        #looks at all edges of item most recently moved to closed list
         for edge in current_location[0].edges:
 
             location_in_openlist = False
@@ -163,17 +162,17 @@ def shortest_path(input_map, start_intersection, end_intersection):
                     open_list_val = item
 
             if edge.node not in closed_list:
+                #if item is not in open list
                 if location_in_openlist == False:
                     edge.node.parent = current_location[0]
-                    open_list.append(edge.node, calculate_g_value([current_location[0].x, current_location[0].y], [edge.node.x, edge.node.y], current_location[0], edge.node) + calculate_h_value([edge.node.x, edge.node.y], [stop_node.x, stop_node.y]))
+                    edge.node.g_value = calculate_g_value([current_location[0].x, current_location[0].y], [edge.node.x, edge.node.y], current_location[0], edge.node)
+                    open_list.append(edge.node, edge.node.g_value + calculate_h_value([edge.node.x, edge.node.y], [stop_node.x, stop_node.y]))
+
+                #if item is in open list
                 elif location_in_openlist == True:
-                    
                     if open_list_val[0].g_value > calculate_g_value([current_location[0].x, current_location[0].y], [edge.node.x, edge.node.y], current_location[0], edge.node):
-                        open_list.queue_list.remove(open_list_val)
+                        edge.node.g_value = calculate_g_value([current_location[0].x, current_location[0].y], [edge.node.x, edge.node.y], current_location[0], edge.node)
                         edge.node.parent = current_location[0]
                         open_list.append(edge.node, calculate_g_value([current_location[0].x, current_location[0].y], [edge.node.x, edge.node.y], current_location[0], edge.node) + calculate_h_value([edge.node.x, edge.node.y], [stop_node.x, stop_node.y]))
-                 
-                        
 
-    print(get_path(stop_node))
     return get_path(stop_node)
