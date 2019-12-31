@@ -65,8 +65,8 @@ def calculate_g_value(current_node_coordinates, next_node_coordinates, current_n
     x1, y1 = current_node_coordinates
     x2, y2 = next_node_coordinates
 
-    subtract_the_x = abs(x1 - x2)
-    subtract_the_y = abs(y1 - y2)
+    subtract_the_x = x1 - x2
+    subtract_the_y = y1 - y2
 
     distance_value = math.sqrt((subtract_the_x * subtract_the_x) + (subtract_the_y * subtract_the_y))
 
@@ -80,8 +80,8 @@ def calculate_h_value(current_node_coordinates, goal_node_coordinates):
     x1, y1 = current_node_coordinates
     x2, y2 = goal_node_coordinates
 
-    subtract_the_x = abs(x1 - x2)
-    subtract_the_y = abs(y1 - y2)
+    subtract_the_x = x1 - x2
+    subtract_the_y = y1 - y2
 
     h_value = math.sqrt((subtract_the_x * subtract_the_x) + (subtract_the_y * subtract_the_y))
 
@@ -99,7 +99,7 @@ def get_path(goal_node):
 def find_connected(start_node, checked_nodes):
     for edge in start_node.edges:
         if edge.node not in checked_nodes:
-            checked_nodes.append(edge.node)
+            checked_nodes.add(edge.node)
             find_connected(edge.node, checked_nodes)
 
     return checked_nodes
@@ -132,7 +132,7 @@ def shortest_path(input_map, start_intersection, end_intersection):
             intersection_node.add_child(map_graph.node_dict[destination], distance_between_intersections)
 
 
-    checked_nodes = []
+    checked_nodes = set()
     find_connected(start_node, checked_nodes)
 
     if stop_node not in checked_nodes:
@@ -144,12 +144,12 @@ def shortest_path(input_map, start_intersection, end_intersection):
     # closed_list is a list of nodes which have been visited
     # and who's neighbors have been inspected
     open_list = PriorityQueue([[start_node, 0]])
-    closed_list = []
+    closed_list = set()
     count = 0
 
     while len(open_list.queue_list) > 0:
         current_location = open_list.pop() #removes smallest item from priority queue, assign to variable
-        closed_list.append(current_location[0]) #puts smallest element in closed list - this prevents it from being checked again
+        closed_list.add(current_location[0]) #puts smallest element in closed list - this prevents it from being checked again
 
         #looks at all edges of item most recently moved to closed list
         for edge in current_location[0].edges:
